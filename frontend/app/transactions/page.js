@@ -1,0 +1,111 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTransactions, deleteTransaction } from '../../store/slices/transactionSlice';
+import DashboardLayout from '../../components/Layout/DashboardLayout';
+import TransactionForm from '../../components/Forms/TransactionForm';
+import { FaTrash, FaPlus, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+
+export default function Transactions() {
+  const dispatch = useDispatch();
+  const { transactions, isLoading } = useSelector((state) => state.transactions);
+  const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    dispatch(getTransactions());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
+      dispatch(deleteTransaction(id));
+    }
+  };
+
+  return (
+    <DashboardLayout>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Transactions</h1>
+          <p className="text-gray-500 mt-2">Manage your income and expenses.</p>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+        >
+          <FaPlus /> {showForm ? 'Close Form' : 'Add Transaction'}
+        </button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className={`w-full ${showForm ? 'lg:w-2/3' : ''} transition-all duration-300`}>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                    <th className="py-4 px-6 font-medium">Description</th>
+                    <th className="py-4 px-6 font-medium">Category</th>
+                    <th className="py-4 px-6 font-medium">Date</th>
+                    <th className="py-4 px-6 font-medium">Amount</th>
+                    <th className="py-4 px-6 font-medium text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="py-8 text-center text-gray-500">
+                        No transactions found. Start by adding one!
+                      </td>
+                    </tr>
+                  ) : (
+                    transactions.map((transaction) => (
+                      <tr key={transaction._id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${transaction.type === 'income' ? 'bg-emerald-100 text-emerald-500' : 'bg-red-100 text-red-500'}`}>
+                              {transaction.type === 'income' ? <FaArrowUp size={12} /> : <FaArrowDown size={12} />}
+                            </div>
+                            <span className="font-medium text-gray-800">{transaction.text}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-gray-600">
+                          <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium">
+                            {transaction.category}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-gray-500 text-sm">
+                          {new Date(transaction.date).toLocaleDateString()}
+                        </td>
+                        <td className={`py-4 px-6 font-semibold ${transaction.type === 'income' ? 'text-emerald-500' : 'text-gray-800'}`}>
+                          {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString()}
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <button
+                            onClick={() => handleDelete(transaction._id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-2"
+                            title="Delete"
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {showForm && (
+          <div className="w-full lg:w-1/3">
+            <div className="sticky top-24">
+              <TransactionForm onClose={() => setShowForm(false)} />
+            </div>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
+  );
+}
