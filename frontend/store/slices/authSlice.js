@@ -24,10 +24,7 @@ export const register = createAsyncThunk(
   async (user, thunkAPI) => {
     try {
       const response = await api.post('/auth/register', user);
-      if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
-        setAuthToken(response.data.token);
-      }
+      // We do not auto-login the user after registration, forcing them to use the login page
       return response.data;
     } catch (error) {
       const message =
@@ -95,7 +92,7 @@ export const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
+        // Do not set state.user here, forcing manual login
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;

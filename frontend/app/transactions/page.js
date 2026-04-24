@@ -5,12 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTransactions, deleteTransaction } from '../../store/slices/transactionSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import TransactionForm from '../../components/Forms/TransactionForm';
-import { FaTrash, FaPlus, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaArrowUp, FaArrowDown, FaEdit, FaDownload } from 'react-icons/fa';
 
 export default function Transactions() {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.transactions);
   const [showForm, setShowForm] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
 
   useEffect(() => {
     dispatch(getTransactions());
@@ -22,6 +23,38 @@ export default function Transactions() {
     }
   };
 
+  const handleEdit = (transaction) => {
+    setEditingTransaction(transaction);
+    setShowForm(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingTransaction(null);
+    setShowForm(!showForm);
+  };
+
+  const exportCSV = () => {
+    const headers = ['Description', 'Category', 'Date', 'Type', 'Amount'];
+    const csvContent = [
+      headers.join(','),
+      ...transactions.map(t => [
+        `"${t.text}"`,
+        `"${t.category}"`,
+        new Date(t.date).toLocaleDateString(),
+        t.type,
+        t.amount
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'transactions.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-8">
@@ -29,12 +62,20 @@ export default function Transactions() {
           <h1 className="text-3xl font-bold text-gray-800">Transactions</h1>
           <p className="text-gray-500 mt-2">Manage your income and expenses.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
-        >
-          <FaPlus /> {showForm ? 'Close Form' : 'Add Transaction'}
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          >
+            <FaDownload /> Export CSV
+          </button>
+          <button
+            onClick={handleAddNew}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          >
+            <FaPlus /> {showForm && !editingTransaction ? 'Close Form' : 'Add Transaction'}
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -82,6 +123,13 @@ export default function Transactions() {
                         </td>
                         <td className="py-4 px-6 text-right">
                           <button
+                            onClick={() => handleEdit(transaction)}
+                            className="text-gray-400 hover:text-blue-500 transition-colors p-2"
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
                             onClick={() => handleDelete(transaction._id)}
                             className="text-gray-400 hover:text-red-500 transition-colors p-2"
                             title="Delete"
@@ -101,7 +149,7 @@ export default function Transactions() {
         {showForm && (
           <div className="w-full lg:w-1/3">
             <div className="sticky top-24">
-              <TransactionForm onClose={() => setShowForm(false)} />
+              <TransactionForm onClose={() => setShowForm(false)} initialData={editingTransaction} />
             </div>
           </div>
         )}

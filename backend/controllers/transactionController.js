@@ -63,8 +63,42 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+// @desc    Update transaction
+// @route   PUT /api/transactions/:id
+// @access  Private
+const editTransaction = async (req, res) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    // Make sure the logged in user matches the transaction user
+    if (transaction.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized' });
+    }
+
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true } // Create it if it doesn't exist, though findById handles that
+    );
+
+    res.status(200).json(updatedTransaction);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({ message: messages.join(', ') });
+    } else {
+      return res.status(500).json({ message: error.message });
+    }
+  }
+};
+
 module.exports = {
   getTransactions,
   addTransaction,
   deleteTransaction,
+  editTransaction,
 };

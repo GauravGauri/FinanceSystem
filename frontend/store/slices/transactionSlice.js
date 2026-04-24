@@ -66,6 +66,25 @@ export const deleteTransaction = createAsyncThunk(
   }
 );
 
+// Update user transaction
+export const updateTransaction = createAsyncThunk(
+  'transactions/update',
+  async (transactionData, thunkAPI) => {
+    try {
+      const response = await api.put(`/transactions/${transactionData.id}`, transactionData);
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const transactionSlice = createSlice({
   name: 'transactions',
   initialState,
@@ -111,6 +130,22 @@ export const transactionSlice = createSlice({
         );
       })
       .addCase(deleteTransaction.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(updateTransaction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTransaction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        const index = state.transactions.findIndex(t => t._id === action.payload._id);
+        if (index !== -1) {
+          state.transactions[index] = action.payload;
+        }
+      })
+      .addCase(updateTransaction.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

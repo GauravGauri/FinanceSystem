@@ -33,7 +33,7 @@ export default function Signup() {
       alert(message);
     }
     if (isSuccess || user) {
-      router.push('/dashboard');
+      router.push('/login');
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, router, dispatch]);
@@ -71,7 +71,7 @@ export default function Signup() {
                   <Field
                     type="text"
                     name="name"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Enter your name"
                   />
                 </div>
@@ -87,7 +87,7 @@ export default function Signup() {
                   <Field
                     type="email"
                     name="email"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -103,7 +103,7 @@ export default function Signup() {
                   <Field
                     type="password"
                     name="password"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Create a password"
                   />
                 </div>
@@ -119,7 +119,7 @@ export default function Signup() {
                   <Field
                     type="password"
                     name="confirmPassword"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Confirm your password"
                   />
                 </div>

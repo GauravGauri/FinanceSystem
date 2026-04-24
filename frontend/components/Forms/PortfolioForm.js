@@ -66,7 +66,7 @@ export default function PortfolioForm({ onClose }) {
               <Field
                 type="text"
                 name="name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                 placeholder={values.type === 'asset' ? 'E.g., House, Stock' : 'E.g., Mortgage, Car Loan'}
               />
               <ErrorMessage name="name" component="div" className="text-red-500 text-xs mt-1" />
@@ -77,7 +77,7 @@ export default function PortfolioForm({ onClose }) {
               <Field
                 type="number"
                 name="value"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                 placeholder="0.00"
               />
               <ErrorMessage name="value" component="div" className="text-red-500 text-xs mt-1" />
@@ -89,7 +89,7 @@ export default function PortfolioForm({ onClose }) {
                 <Field
                   type="number"
                   name="interestRate"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                   placeholder="E.g., 5.5"
                 />
                 <ErrorMessage name="interestRate" component="div" className="text-red-500 text-xs mt-1" />
@@ -101,7 +101,7 @@ export default function PortfolioForm({ onClose }) {
               <Field
                 type="text"
                 name="description"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
                 placeholder="Details..."
               />
             </div>

@@ -4,17 +4,26 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function DashboardLayout({ children }) {
   const { user } = useSelector((state) => state.auth);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !user) {
       router.push('/login');
     }
-  }, [user, router]);
+  }, [user, router, mounted]);
+
+  if (!mounted) {
+    return null; // Match server render
+  }
 
   if (!user) {
     return null; // Or a loading spinner

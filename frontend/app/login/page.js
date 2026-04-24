@@ -64,7 +64,7 @@ export default function Login() {
                   <Field
                     type="email"
                     name="email"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -80,7 +80,7 @@ export default function Login() {
                   <Field
                     type="password"
                     name="password"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-slate-900/60 transition-all shadow-inner"
                     placeholder="Enter your password"
                   />
                 </div>
