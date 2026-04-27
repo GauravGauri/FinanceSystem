@@ -57,23 +57,23 @@ export default function Transactions() {
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Transactions</h1>
           <p className="text-gray-500 mt-2">Manage your income and expenses.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4 w-full sm:w-auto">
           <button
             onClick={exportCSV}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+            className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm flex-1 sm:flex-none min-w-[140px]"
           >
             <FaDownload /> Export CSV
           </button>
           <button
             onClick={handleAddNew}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm flex-1 sm:flex-none min-w-[140px]"
           >
-            <FaPlus /> {showForm && !editingTransaction ? 'Close Form' : 'Add Transaction'}
+            <FaPlus /> {showForm && !editingTransaction ? 'Close' : 'Add Transaction'}
           </button>
         </div>
       </div>

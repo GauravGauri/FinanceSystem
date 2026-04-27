@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { FaLock, FaEnvelope } from 'react-icons/fa';
+import { Lock, Mail } from 'lucide-react';
+import Image from 'next/image';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -33,77 +34,94 @@ export default function Login() {
   }, [user, isError, isSuccess, message, router, dispatch]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-
-      <div className="max-w-md w-full backdrop-blur-xl bg-white/10 rounded-3xl shadow-2xl p-8 border border-white/20 z-10 relative">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-slate-300">Enter your details to access your account.</p>
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* Left Side - Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 xl:px-32 relative">
+        <div className="absolute top-8 left-8 sm:top-12 sm:left-12 flex items-center gap-2">
+          <div className="w-10 h-10 relative flex items-center justify-center">
+            <Image src="/logo.png" alt="GauravMoney Logo" width={40} height={40} className="object-contain" />
+          </div>
+          <span className="text-2xl font-bold text-slate-900 font-heading">Gaurav<span className="text-emerald-600">Money</span></span>
         </div>
 
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          validationSchema={LoginSchema}
-          onSubmit={(values) => {
-            dispatch(login(values));
-          }}
-        >
-          {({ isSubmitting }) => (
-            <Form className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300 ml-1">Email</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FaEnvelope className="text-slate-400" />
+        <div className="max-w-md w-full mx-auto mt-20">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2 font-heading">Welcome back</h1>
+          <p className="text-slate-500 mb-10">Enter your details to access your account.</p>
+
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={LoginSchema}
+            onSubmit={(values) => {
+              dispatch(login(values));
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700">Email Address</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="text-slate-400" size={20} />
+                    </div>
+                    <Field
+                      type="email"
+                      name="email"
+                      className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                      placeholder="you@example.com"
+                    />
                   </div>
-                  <Field
-                    type="email"
-                    name="email"
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-slate-900/60 transition-all shadow-inner"
-                    placeholder="Enter your email"
-                  />
+                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm font-medium mt-1" />
                 </div>
-                <ErrorMessage name="email" component="div" className="text-red-400 text-sm ml-1" />
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300 ml-1">Password</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <FaLock className="text-slate-400" />
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-700">Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Lock className="text-slate-400" size={20} />
+                    </div>
+                    <Field
+                      type="password"
+                      name="password"
+                      className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                      placeholder="••••••••"
+                    />
                   </div>
-                  <Field
-                    type="password"
-                    name="password"
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-900/40 border border-white/10 rounded-xl text-white font-medium text-base placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-slate-900/60 transition-all shadow-inner"
-                    placeholder="Enter your password"
-                  />
+                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm font-medium mt-1" />
                 </div>
-                <ErrorMessage name="password" component="div" className="text-red-400 text-sm ml-1" />
-              </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-emerald-500 hover:from-blue-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-lg transform transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? 'Signing In...' : 'Sign In'}
-              </button>
-            </Form>
-          )}
-        </Formik>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-4 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Signing In...' : 'Sign In'}
+                </button>
+              </Form>
+            )}
+          </Formik>
 
-        <p className="mt-8 text-center text-slate-400">
-          Don't have an account?{' '}
-          <Link href="/signup" className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors">
-            Sign up
-          </Link>
-        </p>
+          <p className="mt-8 text-center text-slate-600 font-medium">
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-emerald-600 hover:text-emerald-700 transition-colors">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side - Image/Gradient */}
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-900 relative items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/20 to-slate-900 z-0"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-emerald-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-20"></div>
+        
+        <div className="relative z-10 text-center max-w-lg px-8">
+          <div className="w-24 h-24 relative mx-auto mb-8 bg-white/10 p-4 rounded-3xl backdrop-blur-md border border-white/20">
+            <Image src="/logo.png" alt="GauravMoney Logo" layout="fill" className="object-contain p-2" />
+          </div>
+          <h2 className="text-4xl font-bold text-white mb-6 font-heading">Take control of your wealth.</h2>
+          <p className="text-xl text-slate-300 leading-relaxed">Join thousands of others who use GauravMoney to budget smarter, track their net worth, and hit their financial goals.</p>
+        </div>
       </div>
     </div>
   );

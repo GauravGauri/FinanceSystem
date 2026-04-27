@@ -30,16 +30,16 @@ export default function Portfolio() {
 
   return (
     <DashboardLayout>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Portfolio</h1>
           <p className="text-gray-500 mt-2">Manage your assets and liabilities.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-gray-900 hover:bg-black text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          className="flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm w-full sm:w-auto"
         >
-          <FaPlus /> {showForm ? 'Close Form' : 'Add Item'}
+          <FaPlus /> {showForm ? 'Close' : 'Add Item'}
         </button>
       </div>
 

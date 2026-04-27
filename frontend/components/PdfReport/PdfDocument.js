@@ -54,7 +54,7 @@ const FinancialDocument = ({ transactions, assets, liabilities, user }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.header}>Financial Report - FinTrack</Text>
+        <Text style={styles.header}>Financial Report - GauravMoney</Text>
         <Text style={{ fontSize: 12, marginBottom: 20, textAlign: 'center', color: '#64748b' }}>
           Generated for: {user?.name || 'User'} | Date: {new Date().toLocaleDateString()}
         </Text>
@@ -100,8 +100,8 @@ export default function DownloadReport({ transactions, assets, liabilities, user
     <div className="mt-8">
       <PDFDownloadLink
         document={<FinancialDocument transactions={transactions} assets={assets} liabilities={liabilities} user={user} />}
-        fileName="fintrack-financial-report.pdf"
-        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-xl shadow-lg transition-colors"
+        fileName="gauravmoney-financial-report.pdf"
+        className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-xl shadow-lg transition-colors"
       >
         {({ blob, url, loading, error }) => (loading ? 'Generating PDF...' : 'Download Full PDF Report')}
       </PDFDownloadLink>
