@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGoals, createGoal, deleteGoal, updateGoal } from '../../store/slices/goalSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
+import ConfirmModal from '../../components/UI/ConfirmModal';
+import InputModal from '../../components/UI/InputModal';
+import { toast } from 'react-toastify';
 import { Plus, Trash2, Target, PlusCircle } from 'lucide-react';
 
 export default function Goals() {
@@ -13,6 +16,10 @@ export default function Goals() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', targetAmount: '', deadline: '', color: '#10b981' });
 
+  // Modal states
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+  const [fundsModal, setFundsModal] = useState({ isOpen: false, goal: null });
+
   useEffect(() => {
     dispatch(getGoals());
   }, [dispatch]);
@@ -20,15 +27,33 @@ export default function Goals() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createGoal(formData));
+    toast.success('Savings goal created!');
     setShowForm(false);
     setFormData({ name: '', targetAmount: '', deadline: '', color: '#10b981' });
   };
 
-  const handleAddFunds = (goal) => {
-    const amount = window.prompt(`How much would you like to add to ${goal.name}?`);
-    if (amount && !isNaN(amount)) {
-      const newAmount = goal.currentAmount + parseFloat(amount);
-      dispatch(updateGoal({ id: goal._id, goalData: { ...goal, currentAmount: newAmount } }));
+  const handleDeleteClick = (id) => {
+    setDeleteModal({ isOpen: true, id });
+  };
+
+  const confirmDelete = () => {
+    if (deleteModal.id) {
+      dispatch(deleteGoal(deleteModal.id));
+      toast.success('Goal deleted successfully');
+      setDeleteModal({ isOpen: false, id: null });
+    }
+  };
+
+  const handleAddFundsClick = (goal) => {
+    setFundsModal({ isOpen: true, goal });
+  };
+
+  const confirmAddFunds = (amount) => {
+    if (fundsModal.goal && amount > 0) {
+      const newAmount = fundsModal.goal.currentAmount + amount;
+      dispatch(updateGoal({ id: fundsModal.goal._id, goalData: { ...fundsModal.goal, currentAmount: newAmount } }));
+      toast.success(`Added $${amount.toLocaleString()} to ${fundsModal.goal.name}`);
+      setFundsModal({ isOpen: false, goal: null });
     }
   };
 
@@ -112,7 +137,7 @@ export default function Goals() {
                       )}
                     </div>
                   </div>
-                  <button onClick={() => dispatch(deleteGoal(goal._id))} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
+                  <button onClick={() => handleDeleteClick(goal._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -139,7 +164,7 @@ export default function Goals() {
                 
                 {!isCompleted && (
                   <button 
-                    onClick={() => handleAddFunds(goal)}
+                    onClick={() => handleAddFundsClick(goal)}
                     className="w-full mt-4 flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 py-2 rounded-lg font-medium transition-colors text-sm"
                   >
                     <PlusCircle size={16} /> Add Funds
@@ -150,6 +175,24 @@ export default function Goals() {
           })
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={confirmDelete}
+        title="Delete Savings Goal"
+        message="Are you sure you want to delete this goal? This progress will be lost."
+        confirmText="Delete"
+      />
+
+      <InputModal
+        isOpen={fundsModal.isOpen}
+        onClose={() => setFundsModal({ isOpen: false, goal: null })}
+        onConfirm={confirmAddFunds}
+        title="Add Funds"
+        message={`Enter the amount you'd like to contribute to your "${fundsModal.goal?.name}" goal.`}
+        placeholder="0.00"
+      />
     </DashboardLayout>
   );
 }

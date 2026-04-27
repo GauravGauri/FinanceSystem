@@ -12,6 +12,8 @@ const outfit = Outfit({
 });
 
 import { Providers } from "../store/Providers";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
   title: "Financial Budget System",
@@ -23,10 +25,23 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${inter.variable} ${outfit.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 font-sans">
+      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 font-sans" suppressHydrationWarning>
         <Providers>
           {children}
+          <ToastContainer 
+            position="bottom-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
         </Providers>
       </body>
     </html>

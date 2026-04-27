@@ -9,6 +9,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Required'),
@@ -25,12 +26,17 @@ export default function Login() {
 
   useEffect(() => {
     if (isError) {
-      alert(message);
+      toast.error(message);
+      dispatch(reset());
     }
-    if (isSuccess || user) {
+    if (isSuccess) {
+      toast.success('Welcome back!');
+      router.push('/dashboard');
+      dispatch(reset());
+    }
+    if (user && !isSuccess) {
       router.push('/dashboard');
     }
-    dispatch(reset());
   }, [user, isError, isSuccess, message, router, dispatch]);
 
   return (

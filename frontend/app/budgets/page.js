@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBudgets, createBudget, deleteBudget } from '../../store/slices/budgetSlice';
 import { getTransactions } from '../../store/slices/transactionSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
+import ConfirmModal from '../../components/UI/ConfirmModal';
+import { toast } from 'react-toastify';
 import { Plus, Trash2, PieChart as PieChartIcon } from 'lucide-react';
 
 export default function Budgets() {
@@ -15,6 +17,9 @@ export default function Budgets() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ category: '', amount: '', period: 'monthly', color: '#3b82f6' });
 
+  // Modal state
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+
   useEffect(() => {
     dispatch(getBudgets());
     dispatch(getTransactions());
@@ -23,8 +28,21 @@ export default function Budgets() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createBudget(formData));
+    toast.success('Budget created successfully');
     setShowForm(false);
     setFormData({ category: '', amount: '', period: 'monthly', color: '#3b82f6' });
+  };
+
+  const handleDeleteClick = (id) => {
+    setDeleteModal({ isOpen: true, id });
+  };
+
+  const confirmDelete = () => {
+    if (deleteModal.id) {
+      dispatch(deleteBudget(deleteModal.id));
+      toast.success('Budget deleted successfully');
+      setDeleteModal({ isOpen: false, id: null });
+    }
   };
 
   const calculateSpent = (category) => {
@@ -32,7 +50,7 @@ export default function Budgets() {
     const currentYear = new Date().getFullYear();
     
     return transactions
-      .filter(t => t.type === 'expense' && t.category === category)
+      .filter(t => t.type === 'expense' && t.category?.toLowerCase() === category?.toLowerCase())
       .filter(t => {
         const d = new Date(t.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
@@ -102,7 +120,7 @@ export default function Budgets() {
                     <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: budget.color }}></div>
                     <h3 className="text-lg font-bold text-slate-800">{budget.category}</h3>
                   </div>
-                  <button onClick={() => dispatch(deleteBudget(budget._id))} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
+                  <button onClick={() => handleDeleteClick(budget._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
                     <Trash2 size={18} />
                   </button>
                 </div>
@@ -134,6 +152,15 @@ export default function Budgets() {
           })
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={confirmDelete}
+        title="Delete Budget"
+        message="Are you sure you want to delete this budget? This will stop tracking your spending limit for this category."
+        confirmText="Delete"
+      />
     </DashboardLayout>
   );
 }

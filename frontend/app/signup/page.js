@@ -9,6 +9,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { User, Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -29,12 +30,14 @@ export default function Signup() {
 
   useEffect(() => {
     if (isError) {
-      alert(message);
+      toast.error(message);
+      dispatch(reset());
     }
-    if (isSuccess || user) {
+    if (isSuccess) {
+      toast.success('Account created successfully!');
       router.push('/login');
+      dispatch(reset());
     }
-    dispatch(reset());
   }, [user, isError, isSuccess, message, router, dispatch]);
 
   return (

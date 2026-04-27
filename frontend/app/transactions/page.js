@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTransactions, deleteTransaction } from '../../store/slices/transactionSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import TransactionForm from '../../components/Forms/TransactionForm';
+import ConfirmModal from '../../components/UI/ConfirmModal';
+import { toast } from 'react-toastify';
 import { FaTrash, FaPlus, FaArrowUp, FaArrowDown, FaEdit, FaDownload } from 'react-icons/fa';
 
 export default function Transactions() {
@@ -12,14 +14,25 @@ export default function Transactions() {
   const { transactions, isLoading } = useSelector((state) => state.transactions);
   const [showForm, setShowForm] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  
+  // Modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
 
   useEffect(() => {
     dispatch(getTransactions());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this transaction?')) {
-      dispatch(deleteTransaction(id));
+  const handleDeleteClick = (id) => {
+    setTransactionToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      dispatch(deleteTransaction(transactionToDelete));
+      toast.success('Transaction deleted successfully');
+      setTransactionToDelete(null);
     }
   };
 
@@ -130,7 +143,7 @@ export default function Transactions() {
                             <FaEdit />
                           </button>
                           <button
-                            onClick={() => handleDelete(transaction._id)}
+                            onClick={() => handleDeleteClick(transaction._id)}
                             className="text-gray-400 hover:text-red-500 transition-colors p-2"
                             title="Delete"
                           >
@@ -154,6 +167,15 @@ export default function Transactions() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Transaction"
+        message="Are you sure you want to delete this transaction? This action cannot be undone."
+        confirmText="Delete"
+      />
     </DashboardLayout>
   );
 }

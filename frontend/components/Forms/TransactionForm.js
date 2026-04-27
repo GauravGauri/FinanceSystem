@@ -1,9 +1,12 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { createTransaction } from '../../store/slices/transactionSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { createTransaction, updateTransaction } from '../../store/slices/transactionSlice';
+import { getBudgets } from '../../store/slices/budgetSlice';
+import { toast } from 'react-toastify';
 
 const TransactionSchema = Yup.object().shape({
   text: Yup.string().required('Required'),
@@ -14,22 +17,39 @@ const TransactionSchema = Yup.object().shape({
   category: Yup.string().required('Required'),
 });
 
-const CATEGORIES = {
+const DEFAULT_CATEGORIES = {
   income: ['Salary', 'Freelance', 'Investments', 'Other'],
   expense: ['Housing', 'Food', 'Transportation', 'Utilities', 'Entertainment', 'Healthcare', 'Other'],
 };
 
 export default function TransactionForm({ onClose, initialData }) {
   const dispatch = useDispatch();
+  const { budgets } = useSelector((state) => state.budgets);
+
+  useEffect(() => {
+    dispatch(getBudgets());
+  }, [dispatch]);
 
   const isEdit = !!initialData;
+
+  // Merge default categories with user's budget categories
+  const getCategories = (type) => {
+    const defaults = DEFAULT_CATEGORIES[type] || [];
+    if (type === 'expense') {
+      const budgetCats = budgets.map(b => b.category);
+      // Combine and remove duplicates (case-insensitive)
+      const combined = [...defaults, ...budgetCats];
+      return Array.from(new Set(combined.map(c => c.trim())));
+    }
+    return defaults;
+  };
 
   const defaultValues = initialData ? {
     text: initialData.text,
     amount: initialData.amount,
     type: initialData.type,
     category: initialData.category,
-  } : { text: '', amount: '', type: 'expense', category: 'Food' };
+  } : { text: '', amount: '', type: 'expense', category: getCategories('expense')[0] || 'Other' };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md border border-gray-100">
@@ -45,13 +65,14 @@ export default function TransactionForm({ onClose, initialData }) {
       <Formik
         initialValues={defaultValues}
         validationSchema={TransactionSchema}
+        enableReinitialize={true}
         onSubmit={(values, { resetForm }) => {
           if (isEdit) {
-            import('../../store/slices/transactionSlice').then(({ updateTransaction }) => {
-              dispatch(updateTransaction({ id: initialData._id, ...values }));
-            });
+            dispatch(updateTransaction({ id: initialData._id, ...values }));
+            toast.success('Transaction updated!');
           } else {
             dispatch(createTransaction(values));
+            toast.success('Transaction created!');
           }
           resetForm();
           if (onClose) onClose();
@@ -63,11 +84,29 @@ export default function TransactionForm({ onClose, initialData }) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
               <div className="flex gap-4">
                 <label className="flex items-center">
-                  <Field type="radio" name="type" value="income" className="mr-2 text-emerald-500 focus:ring-emerald-500" />
+                  <Field 
+                    type="radio" 
+                    name="type" 
+                    value="income" 
+                    className="mr-2 text-emerald-500 focus:ring-emerald-500" 
+                    onChange={(e) => {
+                      setFieldValue('type', 'income');
+                      setFieldValue('category', getCategories('income')[0]);
+                    }}
+                  />
                   <span className="text-gray-700">Income</span>
                 </label>
                 <label className="flex items-center">
-                  <Field type="radio" name="type" value="expense" className="mr-2 text-red-500 focus:ring-red-500" />
+                  <Field 
+                    type="radio" 
+                    name="type" 
+                    value="expense" 
+                    className="mr-2 text-red-500 focus:ring-red-500" 
+                    onChange={(e) => {
+                      setFieldValue('type', 'expense');
+                      setFieldValue('category', getCategories('expense')[0]);
+                    }}
+                  />
                   <span className="text-gray-700">Expense</span>
                 </label>
               </div>
@@ -79,7 +118,7 @@ export default function TransactionForm({ onClose, initialData }) {
                 type="text"
                 name="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
-                placeholder="E.g., Groceries"
+                placeholder="E.g., Monthly Rent"
               />
               <ErrorMessage name="text" component="div" className="text-red-500 text-xs mt-1" />
             </div>
@@ -87,7 +126,7 @@ export default function TransactionForm({ onClose, initialData }) {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
+                <span className="absolute left-3 top-2.5 text-gray-500 font-medium">$</span>
                 <Field
                   type="number"
                   name="amount"
@@ -101,7 +140,7 @@ export default function TransactionForm({ onClose, initialData }) {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
               <Field as="select" name="category" className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 font-medium text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white transition-all shadow-sm">
-                {CATEGORIES[values.type]?.map(cat => (
+                {getCategories(values.type).map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </Field>
@@ -110,9 +149,9 @@ export default function TransactionForm({ onClose, initialData }) {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md transition-colors mt-4"
+              className="w-full py-3 px-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 transition-all transform hover:-translate-y-0.5 mt-4"
             >
-              {isEdit ? 'Save Changes' : 'Add Transaction'}
+              {isEdit ? 'Update Transaction' : 'Create Transaction'}
             </button>
           </Form>
         )}

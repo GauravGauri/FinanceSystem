@@ -55,13 +55,26 @@ export default function DashboardCharts({ transactions, assets, liabilities }) {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'right',
+        position: typeof window !== 'undefined' && window.innerWidth < 768 ? 'bottom' : 'right',
+        labels: {
+          boxWidth: 12,
+          padding: 15,
+          font: {
+            size: 11
+          }
+        }
       },
+      tooltip: {
+        backgroundColor: '#1e293b',
+        padding: 12,
+        titleFont: { size: 14 },
+        bodyFont: { size: 13 },
+        cornerRadius: 8,
+      }
     },
     cutout: '70%',
   };
 
-  // Monthly income vs expense (Mocking for current month for simplicity, ideally group by month)
   const currentMonthIncome = transactions
     .filter((t) => t.type === 'income')
     .reduce((acc, t) => acc + t.amount, 0);
@@ -77,13 +90,15 @@ export default function DashboardCharts({ transactions, assets, liabilities }) {
         label: 'Income',
         data: [currentMonthIncome],
         backgroundColor: '#10b981', // emerald
-        borderRadius: 4,
+        borderRadius: 8,
+        barThickness: 40,
       },
       {
         label: 'Expenses',
         data: [currentMonthExpense],
         backgroundColor: '#ef4444', // red
-        borderRadius: 4,
+        borderRadius: 8,
+        barThickness: 40,
       },
     ],
   };
@@ -94,6 +109,11 @@ export default function DashboardCharts({ transactions, assets, liabilities }) {
     plugins: {
       legend: {
         position: 'top',
+        align: 'end',
+        labels: {
+          boxWidth: 12,
+          font: { size: 12 }
+        }
       },
     },
     scales: {
@@ -102,24 +122,39 @@ export default function DashboardCharts({ transactions, assets, liabilities }) {
         grid: {
           display: true,
           color: '#f3f4f6',
+        },
+        ticks: {
+          font: { size: 11 }
         }
       },
       x: {
         grid: {
           display: false,
+        },
+        ticks: {
+          font: { size: 11 }
         }
       }
     },
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 h-full w-full">
-      <div className="flex-1 min-w-0 h-full relative">
-        <Bar data={barData} options={barOptions} />
+    <div className="flex flex-col lg:flex-row gap-12 h-full w-full py-2">
+      <div className="flex-1 min-w-0 h-[300px] lg:h-full relative">
+        <h4 className="text-sm font-semibold text-slate-500 mb-4 flex items-center gap-2">
+          <div className="w-2 h-4 bg-emerald-500 rounded-full"></div>
+          Income vs Expenses
+        </h4>
+        <div className="h-[calc(100%-2rem)]">
+          <Bar data={barData} options={barOptions} />
+        </div>
       </div>
-      <div className="flex-1 min-w-0 h-full relative">
-        <h4 className="text-center text-sm font-medium text-gray-500 mb-2">Expenses by Category</h4>
-        <div className="h-[90%]">
+      <div className="flex-1 min-w-0 h-[350px] lg:h-full relative flex flex-col">
+        <h4 className="text-sm font-semibold text-slate-500 mb-4 flex items-center gap-2">
+          <div className="w-2 h-4 bg-blue-500 rounded-full"></div>
+          Expenses by Category
+        </h4>
+        <div className="flex-1 relative">
           <Doughnut data={doughnutData} options={doughnutOptions} />
         </div>
       </div>

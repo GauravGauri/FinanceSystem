@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPortfolio, deleteAsset, deleteLiability } from '../../store/slices/portfolioSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import PortfolioForm from '../../components/Forms/PortfolioForm';
+import ConfirmModal from '../../components/UI/ConfirmModal';
+import { toast } from 'react-toastify';
 import { FaTrash, FaPlus, FaBuilding, FaCreditCard } from 'react-icons/fa';
 
 export default function Portfolio() {
@@ -12,20 +14,26 @@ export default function Portfolio() {
   const { assets, liabilities, isLoading } = useSelector((state) => state.portfolio);
   const [showForm, setShowForm] = useState(false);
 
+  // Modal state
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, type: null });
+
   useEffect(() => {
     dispatch(getPortfolio());
   }, [dispatch]);
 
-  const handleDeleteAsset = (id) => {
-    if (window.confirm('Are you sure you want to delete this asset?')) {
-      dispatch(deleteAsset(id));
-    }
+  const handleDeleteClick = (id, type) => {
+    setDeleteModal({ isOpen: true, id, type });
   };
 
-  const handleDeleteLiability = (id) => {
-    if (window.confirm('Are you sure you want to delete this liability?')) {
-      dispatch(deleteLiability(id));
+  const confirmDelete = () => {
+    if (deleteModal.type === 'asset') {
+      dispatch(deleteAsset(deleteModal.id));
+      toast.success('Asset deleted successfully');
+    } else {
+      dispatch(deleteLiability(deleteModal.id));
+      toast.success('Liability deleted successfully');
     }
+    setDeleteModal({ isOpen: false, id: null, type: null });
   };
 
   return (
@@ -77,7 +85,7 @@ export default function Portfolio() {
                         <td className="py-4 px-6 text-gray-500 text-sm">{asset.description || '-'}</td>
                         <td className="py-4 px-6 text-right">
                           <button
-                            onClick={() => handleDeleteAsset(asset._id)}
+                            onClick={() => handleDeleteClick(asset._id, 'asset')}
                             className="text-gray-400 hover:text-red-500 transition-colors p-2"
                             title="Delete"
                           >
@@ -123,7 +131,7 @@ export default function Portfolio() {
                         <td className="py-4 px-6 text-gray-500 text-sm">{liability.interestRate}%</td>
                         <td className="py-4 px-6 text-right">
                           <button
-                            onClick={() => handleDeleteLiability(liability._id)}
+                            onClick={() => handleDeleteClick(liability._id, 'liability')}
                             className="text-gray-400 hover:text-red-500 transition-colors p-2"
                             title="Delete"
                           >
@@ -148,6 +156,15 @@ export default function Portfolio() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={confirmDelete}
+        title={`Delete ${deleteModal.type === 'asset' ? 'Asset' : 'Liability'}`}
+        message={`Are you sure you want to delete this ${deleteModal.type}? This action cannot be undone.`}
+        confirmText="Delete"
+      />
     </DashboardLayout>
   );
 }

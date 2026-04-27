@@ -65,17 +65,34 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 shadow-lg text-white col-span-1 lg:col-span-1 flex flex-col justify-center">
-          <h2 className="text-lg font-medium opacity-80">Net Worth</h2>
-          <div className="text-4xl font-bold mt-2 mb-4">${netWorth.toLocaleString()}</div>
-          <div className="h-px bg-white/20 w-full my-4"></div>
-          <h2 className="text-lg font-medium opacity-80">Monthly Balance</h2>
-          <div className="text-3xl font-bold mt-2">${monthlyBalance.toLocaleString()}</div>
+        <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 col-span-1 lg:col-span-1 flex flex-col justify-between relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500"></div>
+          
+          <div className="relative">
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Net Worth</h2>
+            <div className="text-4xl font-black text-slate-900 mt-2 mb-6 font-heading">
+              ${netWorth.toLocaleString()}
+            </div>
+            
+            <div className="h-px bg-slate-100 w-full mb-6"></div>
+            
+            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Monthly Balance</h2>
+            <div className={`text-3xl font-black mt-2 font-heading ${monthlyBalance >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+              {monthlyBalance >= 0 ? '+' : ''}${monthlyBalance.toLocaleString()}
+            </div>
+          </div>
+          
+          <div className="mt-8 flex items-center gap-2">
+            <div className={`px-3 py-1 rounded-full text-xs font-bold ${monthlyBalance >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+              {monthlyBalance >= 0 ? 'Healthy' : 'Deficit'}
+            </div>
+            <p className="text-xs text-slate-400">Current month status</p>
+          </div>
         </div>
         
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 col-span-1 lg:col-span-2">
-          <h3 className="text-lg font-semibold mb-4 text-slate-900 font-heading">Income vs Expenses Overview</h3>
-          <div className="h-64">
+          <h3 className="text-lg font-semibold mb-4 text-slate-900 font-heading">Financial Statistics</h3>
+          <div className="h-auto lg:h-[400px]">
             <DashboardCharts transactions={transactions} assets={assets} liabilities={liabilities} />
           </div>
         </div>
