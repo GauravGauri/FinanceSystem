@@ -1,14 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/goals/';
+import api from '../../services/api';
 
 // Get user goals
 export const getGoals = createAsyncThunk('goals/getAll', async (_, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.get(API_URL, config);
+    const response = await api.get('/goals');
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -19,9 +15,7 @@ export const getGoals = createAsyncThunk('goals/getAll', async (_, thunkAPI) => 
 // Create new goal
 export const createGoal = createAsyncThunk('goals/create', async (goalData, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.post(API_URL, goalData, config);
+    const response = await api.post('/goals', goalData);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -32,9 +26,7 @@ export const createGoal = createAsyncThunk('goals/create', async (goalData, thun
 // Update goal
 export const updateGoal = createAsyncThunk('goals/update', async ({ id, goalData }, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.put(API_URL + id, goalData, config);
+    const response = await api.put(`/goals/${id}`, goalData);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -45,9 +37,7 @@ export const updateGoal = createAsyncThunk('goals/update', async ({ id, goalData
 // Delete goal
 export const deleteGoal = createAsyncThunk('goals/delete', async (id, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.delete(API_URL + id, config);
+    const response = await api.delete(`/goals/${id}`);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -101,3 +91,4 @@ export const goalSlice = createSlice({
 
 export const { reset } = goalSlice.actions;
 export default goalSlice.reducer;
+

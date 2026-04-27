@@ -1,14 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/budgets/';
+import api from '../../services/api';
 
 // Get user budgets
 export const getBudgets = createAsyncThunk('budgets/getAll', async (_, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.get(API_URL, config);
+    const response = await api.get('/budgets');
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -19,9 +15,7 @@ export const getBudgets = createAsyncThunk('budgets/getAll', async (_, thunkAPI)
 // Create new budget
 export const createBudget = createAsyncThunk('budgets/create', async (budgetData, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.post(API_URL, budgetData, config);
+    const response = await api.post('/budgets', budgetData);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -32,9 +26,7 @@ export const createBudget = createAsyncThunk('budgets/create', async (budgetData
 // Update budget
 export const updateBudget = createAsyncThunk('budgets/update', async ({ id, budgetData }, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.put(API_URL + id, budgetData, config);
+    const response = await api.put(`/budgets/${id}`, budgetData);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -45,9 +37,7 @@ export const updateBudget = createAsyncThunk('budgets/update', async ({ id, budg
 // Delete budget
 export const deleteBudget = createAsyncThunk('budgets/delete', async (id, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.user.token;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.delete(API_URL + id, config);
+    const response = await api.delete(`/budgets/${id}`);
     return response.data;
   } catch (error) {
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
@@ -101,3 +91,4 @@ export const budgetSlice = createSlice({
 
 export const { reset } = budgetSlice.actions;
 export default budgetSlice.reducer;
+
