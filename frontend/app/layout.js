@@ -16,8 +16,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
-  title: "Financial Budget System",
-  description: "Manage your finances, assets, and liabilities",
+  title: "GauravMoney - Smart Finance Tracking",
+  description: "Manage your finances, assets, and liabilities with GauravMoney",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({ children }) {
