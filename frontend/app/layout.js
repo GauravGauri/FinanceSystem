@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 font-sans" suppressHydrationWarning>
         <Providers>
           {children}
-          <ToastContainer 
+          <ToastContainer
             position="bottom-right"
             autoClose={3000}
             hideProgressBar={false}

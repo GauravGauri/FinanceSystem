@@ -132,7 +132,7 @@ export default function Home() {
                 {/* Mockup Dashboard UI using Tailwind */}
                 <div className="absolute inset-0 bg-slate-50 flex overflow-hidden rounded-xl">
                   {/* Mock Sidebar */}
-                  <div className="w-1/4 h-full bg-slate-900 p-4 flex flex-col gap-4 border-r border-slate-800">
+                  <div className="hidden md:flex w-1/4 h-full bg-slate-900 p-4 flex-col gap-4 border-r border-slate-800">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-6 h-6 rounded-md bg-emerald-500"></div>
                       <div className="h-4 w-24 bg-slate-700 rounded"></div>
@@ -145,40 +145,52 @@ export default function Home() {
                     </div>
                   </div>
                   {/* Mock Main Content */}
-                  <div className="flex-1 p-6 flex flex-col gap-6">
+                  <div className="flex-1 p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 overflow-y-auto">
                     {/* Header */}
                     <div className="flex justify-between items-center">
-                      <div className="h-6 w-32 bg-slate-200 rounded"></div>
+                      <div className="flex flex-col">
+                        <div className="h-5 sm:h-6 w-24 sm:w-32 bg-slate-200 rounded mb-1"></div>
+                        <div className="h-3 w-16 sm:w-20 bg-slate-200 rounded hidden sm:block"></div>
+                      </div>
                       <div className="w-8 h-8 rounded-full bg-slate-200"></div>
                     </div>
                     {/* Cards */}
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <div className="h-3 w-16 bg-slate-200 rounded mb-2"></div>
-                        <div className="h-6 w-24 bg-slate-800 rounded"></div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div className="text-xs sm:text-sm text-slate-500 font-medium mb-1">Total Balance</div>
+                        <div className="text-lg sm:text-2xl font-bold text-slate-800">$24,500.00</div>
+                        <div className="text-[10px] sm:text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
+                           +2.4% <span className="text-slate-400">from last month</span>
+                        </div>
                       </div>
-                      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <div className="h-3 w-16 bg-slate-200 rounded mb-2"></div>
-                        <div className="h-6 w-24 bg-emerald-600 rounded"></div>
+                      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                        <div className="text-xs sm:text-sm text-slate-500 font-medium mb-1">Monthly Income</div>
+                        <div className="text-lg sm:text-2xl font-bold text-emerald-600">+$5,240.00</div>
+                        <div className="text-[10px] sm:text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
+                           +1.2% <span className="text-slate-400">from last month</span>
+                        </div>
                       </div>
-                      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
-                        <div className="h-3 w-16 bg-slate-200 rounded mb-2"></div>
-                        <div className="h-6 w-24 bg-blue-600 rounded"></div>
+                      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between col-span-2 sm:col-span-1">
+                        <div className="text-xs sm:text-sm text-slate-500 font-medium mb-1">Monthly Expenses</div>
+                        <div className="text-lg sm:text-2xl font-bold text-red-500">-$3,120.00</div>
+                        <div className="text-[10px] sm:text-xs text-red-500 font-medium mt-2 flex items-center gap-1">
+                           +4.5% <span className="text-slate-400">from last month</span>
+                        </div>
                       </div>
                     </div>
                     {/* Mock Chart Area */}
-                    <div className="bg-white flex-1 rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col">
-                      <h4 className="text-sm font-bold text-slate-700 mb-4">Net Worth Over Time</h4>
-                      <div className="flex-1 min-h-[150px]">
+                    <div className="bg-white flex-1 rounded-xl shadow-sm border border-slate-100 p-3 sm:p-4 flex flex-col min-h-[150px]">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-700 mb-2 sm:mb-4">Net Worth Over Time</h4>
+                      <div className="flex-1 min-h-[100px] sm:min-h-[150px]">
                         <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={mockChartData}>
+                          <AreaChart data={mockChartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
                             <defs>
                               <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
                                 <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                               </linearGradient>
                             </defs>
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} dy={10} />
                             <YAxis hide={true} />
                             <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
                             <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
