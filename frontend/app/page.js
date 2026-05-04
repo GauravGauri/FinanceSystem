@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, BarChart3, PieChart, Target, ShieldCheck } from 'lucide-react';
 import PublicLayout from '../components/Layout/PublicLayout';
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,6 +20,14 @@ const mockChartData = [
 ];
 
 export default function Home() {
+  const { user } = useSelector((state) => state.auth);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -107,16 +117,28 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <Link href="/signup">
-                <button className="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 flex items-center justify-center gap-2">
-                  Start for free <ArrowRight size={20} />
-                </button>
-              </Link>
-              <Link href="/about">
-                <button className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-full font-semibold text-lg transition-all shadow-sm border border-slate-200">
-                  See how it works
-                </button>
-              </Link>
+              {mounted && user ? (
+                <Link href="/dashboard">
+                  <button className="w-full sm:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-bold text-xl transition-all shadow-xl shadow-emerald-500/30 hover:-translate-y-1 flex items-center justify-center gap-2">
+                    Get Started <ArrowRight size={22} />
+                  </button>
+                </Link>
+              ) : (
+
+
+                <>
+                  <Link href="/signup">
+                    <button className="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 flex items-center justify-center gap-2">
+                      Start for free <ArrowRight size={20} />
+                    </button>
+                  </Link>
+                  <Link href="/about">
+                    <button className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-full font-semibold text-lg transition-all shadow-sm border border-slate-200">
+                      See how it works
+                    </button>
+                  </Link>
+                </>
+              )}
             </motion.div>
           </div>
 

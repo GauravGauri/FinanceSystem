@@ -9,6 +9,21 @@ const api = axios.create({
   },
 });
 
+// Set token from localStorage on initial load to prevent 401s on reload
+if (typeof window !== 'undefined') {
+  const userString = localStorage.getItem('user');
+  if (userString) {
+    try {
+      const user = JSON.parse(userString);
+      if (user && user.token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+      }
+    } catch (error) {
+      console.error('Error parsing user from localStorage', error);
+    }
+  }
+}
+
 export const setAuthToken = (token) => {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -18,3 +33,4 @@ export const setAuthToken = (token) => {
 };
 
 export default api;
+

@@ -4,9 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 export default function PublicLayout({ children }) {
   const pathname = usePathname();
+  const { user } = useSelector((state) => state.auth);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
@@ -30,18 +38,30 @@ export default function PublicLayout({ children }) {
             </div>
 
             <div className="flex items-center gap-4">
-              <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors hidden sm:block">
-                Log in
-              </Link>
-              <Link href="/signup">
-                <button className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                  Get Started
-                </button>
-              </Link>
+              {mounted && user ? (
+                <Link href="/dashboard">
+                  <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-emerald-600/20 hover:-translate-y-0.5 flex items-center gap-2">
+                    Go to Dashboard
+                  </button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" className="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors hidden sm:block">
+                    Log in
+                  </Link>
+                  <Link href="/signup">
+                    <button className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                      Get Started
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
       </nav>
+
+
 
       {/* Main Content */}
       <main className="flex-grow pt-20">
