@@ -6,6 +6,7 @@ import { getTransactions, deleteTransaction } from '../../store/slices/transacti
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import TransactionForm from '../../components/Forms/TransactionForm';
 import ConfirmModal from '../../components/UI/ConfirmModal';
+import FormModal from '../../components/UI/FormModal';
 import { toast } from 'react-toastify';
 import { FaTrash, FaPlus, FaArrowUp, FaArrowDown, FaEdit, FaDownload } from 'react-icons/fa';
 
@@ -91,8 +92,8 @@ export default function Transactions() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        <div className={`w-full ${showForm ? 'lg:w-2/3' : ''} transition-all duration-300`}>
+      <div className="flex flex-col gap-8 items-start">
+        <div className="w-full transition-all duration-300">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -158,15 +159,15 @@ export default function Transactions() {
             </div>
           </div>
         </div>
-
-        {showForm && (
-          <div className="w-full lg:w-1/3">
-            <div className="sticky top-24">
-              <TransactionForm onClose={() => setShowForm(false)} initialData={editingTransaction} />
-            </div>
-          </div>
-        )}
       </div>
+
+      <FormModal 
+        isOpen={showForm} 
+        onClose={() => setShowForm(false)} 
+        title={editingTransaction ? "Edit Transaction" : "Add Transaction"}
+      >
+        <TransactionForm onClose={() => setShowForm(false)} initialData={editingTransaction} />
+      </FormModal>
 
       <ConfirmModal
         isOpen={isDeleteModalOpen}

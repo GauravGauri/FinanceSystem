@@ -6,15 +6,17 @@ import { getGoals, createGoal, deleteGoal, updateGoal } from '../../store/slices
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import ConfirmModal from '../../components/UI/ConfirmModal';
 import InputModal from '../../components/UI/InputModal';
+import FormModal from '../../components/UI/FormModal';
+import GoalForm from '../../components/Forms/GoalForm';
 import { toast } from 'react-toastify';
-import { Plus, Trash2, Target, PlusCircle } from 'lucide-react';
+import { Plus, Trash2, Target, PlusCircle, Edit2 } from 'lucide-react';
 
 export default function Goals() {
   const dispatch = useDispatch();
   const { goals } = useSelector((state) => state.goals);
   
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', targetAmount: '', deadline: '', color: '#10b981' });
+  const [editingGoal, setEditingGoal] = useState(null);
 
   // Modal states
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
@@ -24,12 +26,14 @@ export default function Goals() {
     dispatch(getGoals());
   }, [dispatch]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createGoal(formData));
-    toast.success('Savings goal created!');
-    setShowForm(false);
-    setFormData({ name: '', targetAmount: '', deadline: '', color: '#10b981' });
+  const handleAddNew = () => {
+    setEditingGoal(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (goal) => {
+    setEditingGoal(goal);
+    setShowForm(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -65,41 +69,20 @@ export default function Goals() {
           <p className="text-slate-500 mt-2">Track your savings targets.</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleAddNew}
           className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-md shadow-blue-500/20 w-full sm:w-auto"
         >
-          <Plus size={20} /> {showForm ? 'Cancel' : 'New Goal'}
+          <Plus size={20} /> {showForm && !editingGoal ? 'Cancel' : 'New Goal'}
         </button>
       </div>
 
-      {showForm && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 max-w-2xl">
-          <h2 className="text-xl font-bold mb-4 font-heading text-slate-800">Create a Savings Goal</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Goal Name</label>
-              <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. New Car, Vacation" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Target Amount</label>
-                <input type="number" required min="0" step="0.01" value={formData.targetAmount} onChange={(e) => setFormData({...formData, targetAmount: e.target.value})} className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Target Date (Optional)</label>
-                <input type="date" value={formData.deadline} onChange={(e) => setFormData({...formData, deadline: e.target.value})} className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Theme Color</label>
-              <input type="color" value={formData.color} onChange={(e) => setFormData({...formData, color: e.target.value})} className="w-full h-10 rounded-lg cursor-pointer" />
-            </div>
-            <button type="submit" className="w-full bg-slate-900 text-white font-medium py-2.5 rounded-lg hover:bg-slate-800 transition-colors">
-              Save Goal
-            </button>
-          </form>
-        </div>
-      )}
+      <FormModal 
+        isOpen={showForm} 
+        onClose={() => setShowForm(false)} 
+        title={editingGoal ? "Edit Goal" : "New Goal"}
+      >
+        <GoalForm onClose={() => setShowForm(false)} initialData={editingGoal} />
+      </FormModal>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {goals.length === 0 && !showForm ? (
@@ -137,9 +120,14 @@ export default function Goals() {
                       )}
                     </div>
                   </div>
-                  <button onClick={() => handleDeleteClick(goal._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="flex gap-1">
+                    <button onClick={() => handleEdit(goal)} className="text-slate-400 hover:text-blue-500 p-2 transition-colors">
+                      <Edit2 size={18} />
+                    </button>
+                    <button onClick={() => handleDeleteClick(goal._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="mb-4">

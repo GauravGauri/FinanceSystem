@@ -52,16 +52,7 @@ export default function TransactionForm({ onClose, initialData }) {
   } : { text: '', amount: '', type: 'expense', category: getCategories('expense')[0] || 'Other' };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md border border-gray-100">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-800">{isEdit ? 'Edit Transaction' : 'Add Transaction'}</h2>
-        {onClose && (
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            &times;
-          </button>
-        )}
-      </div>
-
+    <>
       <Formik
         initialValues={defaultValues}
         validationSchema={TransactionSchema}
@@ -156,6 +147,6 @@ export default function TransactionForm({ onClose, initialData }) {
           </Form>
         )}
       </Formik>
-    </div>
+    </>
   );
 }

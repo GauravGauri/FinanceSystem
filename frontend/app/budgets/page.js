@@ -6,8 +6,10 @@ import { getBudgets, createBudget, deleteBudget } from '../../store/slices/budge
 import { getTransactions } from '../../store/slices/transactionSlice';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import ConfirmModal from '../../components/UI/ConfirmModal';
+import FormModal from '../../components/UI/FormModal';
+import BudgetForm from '../../components/Forms/BudgetForm';
 import { toast } from 'react-toastify';
-import { Plus, Trash2, PieChart as PieChartIcon } from 'lucide-react';
+import { Plus, Trash2, PieChart as PieChartIcon, Edit2 } from 'lucide-react';
 
 export default function Budgets() {
   const dispatch = useDispatch();
@@ -15,7 +17,7 @@ export default function Budgets() {
   const { transactions } = useSelector((state) => state.transactions);
   
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ category: '', amount: '', period: 'monthly', color: '#3b82f6' });
+  const [editingBudget, setEditingBudget] = useState(null);
 
   // Modal state
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
@@ -25,12 +27,14 @@ export default function Budgets() {
     dispatch(getTransactions());
   }, [dispatch]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createBudget(formData));
-    toast.success('Budget created successfully');
-    setShowForm(false);
-    setFormData({ category: '', amount: '', period: 'monthly', color: '#3b82f6' });
+  const handleAddNew = () => {
+    setEditingBudget(null);
+    setShowForm(true);
+  };
+
+  const handleEdit = (budget) => {
+    setEditingBudget(budget);
+    setShowForm(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -66,37 +70,20 @@ export default function Budgets() {
           <p className="text-slate-500 mt-2">Manage your spending limits.</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={handleAddNew}
           className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-md shadow-emerald-500/20 w-full sm:w-auto"
         >
-          <Plus size={20} /> {showForm ? 'Cancel' : 'New Budget'}
+          <Plus size={20} /> {showForm && !editingBudget ? 'Cancel' : 'New Budget'}
         </button>
       </div>
 
-      {showForm && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 max-w-2xl">
-          <h2 className="text-xl font-bold mb-4 font-heading text-slate-800">Create a Budget</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-                <input type="text" required value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="e.g. Groceries" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Monthly Amount</label>
-                <input type="number" required min="0" step="0.01" value={formData.amount} onChange={(e) => setFormData({...formData, amount: e.target.value})} className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="0.00" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Theme Color</label>
-              <input type="color" value={formData.color} onChange={(e) => setFormData({...formData, color: e.target.value})} className="w-full h-10 rounded-lg cursor-pointer" />
-            </div>
-            <button type="submit" className="w-full bg-slate-900 text-white font-medium py-2.5 rounded-lg hover:bg-slate-800 transition-colors">
-              Save Budget
-            </button>
-          </form>
-        </div>
-      )}
+      <FormModal 
+        isOpen={showForm} 
+        onClose={() => setShowForm(false)} 
+        title={editingBudget ? "Edit Budget" : "New Budget"}
+      >
+        <BudgetForm onClose={() => setShowForm(false)} initialData={editingBudget} />
+      </FormModal>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {budgets.length === 0 && !showForm ? (
@@ -120,9 +107,14 @@ export default function Budgets() {
                     <div className="w-4 h-4 rounded-full shadow-sm" style={{ backgroundColor: budget.color }}></div>
                     <h3 className="text-lg font-bold text-slate-800">{budget.category}</h3>
                   </div>
-                  <button onClick={() => handleDeleteClick(budget._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="flex gap-1">
+                    <button onClick={() => handleEdit(budget)} className="text-slate-400 hover:text-blue-500 p-2 transition-colors">
+                      <Edit2 size={18} />
+                    </button>
+                    <button onClick={() => handleDeleteClick(budget._id)} className="text-slate-400 hover:text-red-500 p-2 transition-colors">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="flex justify-between items-end mb-2 text-sm">
